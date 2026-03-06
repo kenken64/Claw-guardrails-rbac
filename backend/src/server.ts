@@ -22,6 +22,7 @@ app.use("/api/groups", groupRoutes);
 app.use("/api/instances", instanceRoutes);
 app.use("/api/rbac", rbacRoutes);
 app.use("/api/deploy", deployRoutes);
+app.use("/api/admin", (await import("./routes/admin.js")).default);
 
 // Health check
 app.get("/api/health", (_req, res) => {

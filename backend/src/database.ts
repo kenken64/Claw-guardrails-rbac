@@ -149,6 +149,17 @@ db.exec(`
     details TEXT,
     created_at TEXT DEFAULT (datetime('now'))
   );
+
+  -- API tokens for plugins / integrations (store hash)
+  CREATE TABLE IF NOT EXISTS api_tokens (
+    id TEXT PRIMARY KEY,
+    token_hash TEXT NOT NULL,
+    name TEXT,
+    owner_id TEXT REFERENCES users(id),
+    team_id TEXT REFERENCES teams(id),
+    scopes TEXT DEFAULT '[]',
+    created_at TEXT DEFAULT (datetime('now'))
+  );
 `);
 
 // ─── Seed Default Permissions ────────────────────────────────────────────────
