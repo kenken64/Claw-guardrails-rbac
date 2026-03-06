@@ -1,0 +1,13 @@
+{
+  "name": "@kenken64/openclaw-team-rbac",
+  "version": "1.0.0",
+  "description": "OpenClaw Team RBAC plugin — validates team member permissions for tools and chat in group contexts",
+  "type": "module",
+  "openclaw": {
+    "extensions": ["./src/index.ts"]
+  },
+  "files": ["src/", "package.json", "README.md"],
+  "keywords": ["openclaw", "openclaw-plugin", "rbac", "team", "permissions"],
+  "author": "Kenneth Phang <kenken64>",
+  "license": "MIT"
+}
