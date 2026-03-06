@@ -1,42 +1,170 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+:root {
+  --bg-primary: #0f0f23;
+  --bg-secondary: #1a1a2e;
+  --bg-card: #16213e;
+  --border: #2d3436;
+  --text-primary: #dfe6e9;
+  --text-secondary: #b2bec3;
+  --accent-red: #e74c3c;
+  --accent-green: #2ecc71;
+  --accent-blue: #3498db;
+  --accent-yellow: #f1c40f;
+  --accent-purple: #6c5ce7;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 18px;
+  color: var(--text-secondary);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Layout */
+.page { min-height: 100vh; display: flex; flex-direction: column; }
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--accent-red);
 }
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+.navbar-brand span:first-child { font-size: 24px; }
+.navbar-brand span:last-child { font-size: 18px; font-weight: 700; }
+.navbar-user { display: flex; align-items: center; gap: 12px; }
+.navbar-user span { color: var(--text-secondary); font-size: 14px; }
 
+.content { flex: 1; padding: 24px; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+/* Buttons */
+.btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+.btn-primary { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+.btn-primary:hover { background: #2980b9; }
+.btn-danger { background: var(--accent-red); color: #fff; border-color: var(--accent-red); }
+.btn-danger:hover { background: #c0392b; }
+.btn-success { background: var(--accent-green); color: #fff; border-color: var(--accent-green); }
+.btn-ghost { background: transparent; color: var(--text-secondary); }
+.btn-ghost:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+
+/* Cards */
 .card {
-  padding: 2em;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
 }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.card-title { font-size: 16px; font-weight: 600; }
 
-.read-the-docs {
-  color: #888;
+/* Forms */
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-secondary); }
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
 }
+.form-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(52,152,219,0.2); }
+.form-select { composes: form-input; }
+
+/* Grid */
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+
+/* Tags/Badges */
+.badge {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-green { background: rgba(46,204,113,0.15); color: var(--accent-green); }
+.badge-yellow { background: rgba(241,196,15,0.15); color: var(--accent-yellow); }
+.badge-red { background: rgba(231,76,60,0.15); color: var(--accent-red); }
+.badge-blue { background: rgba(52,152,219,0.15); color: var(--accent-blue); }
+.badge-purple { background: rgba(108,92,231,0.15); color: var(--accent-purple); }
+
+/* Tabs */
+.tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+.tab {
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+.tab:hover { color: var(--text-primary); }
+.tab-active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
+
+/* Table */
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.table th { color: var(--text-secondary); font-weight: 500; font-size: 12px; text-transform: uppercase; }
+.table tr:hover { background: rgba(255,255,255,0.02); }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 100;
+}
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  width: 90%; max-width: 500px;
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.modal-title { font-size: 18px; font-weight: 600; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+
+/* Provider badges */
+.provider-do { background: rgba(0,105,255,0.15); color: #0069ff; }
+.provider-tencent { background: rgba(0,130,216,0.15); color: #0082d8; }
+.provider-aws { background: rgba(255,153,0,0.15); color: #ff9900; }
+
+/* Status */
+.status-online { color: var(--accent-green); }
+.status-offline { color: var(--accent-red); }
+.status-pending { color: var(--accent-yellow); }
