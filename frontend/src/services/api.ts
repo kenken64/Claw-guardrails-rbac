@@ -60,4 +60,11 @@ export const api = {
   updateInstance: (id: string, data: any) => request(`/instances/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteInstance: (id: string) => request(`/instances/${id}`, { method: "DELETE" }),
   getAuditLog: (teamId: string) => request(`/instances/team/${teamId}/audit`),
+
+  // Deploy (clawmacdo integration)
+  provisionInstance: (data: any) => request("/deploy/provision", { method: "POST", body: JSON.stringify(data) }),
+  getDeployStatus: (jobId: string) => request(`/deploy/status/${jobId}`),
+  destroyInstance: (instanceId: string) => request(`/deploy/destroy/${instanceId}`, { method: "POST" }),
+  restartInstance: (instanceId: string) => request(`/deploy/restart/${instanceId}`, { method: "POST" }),
+  checkHealth: (instanceId: string) => request(`/deploy/check-health/${instanceId}`, { method: "POST" }),
 };

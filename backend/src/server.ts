@@ -6,6 +6,7 @@ import roleRoutes from "./routes/roles.js";
 import groupRoutes from "./routes/groups.js";
 import instanceRoutes from "./routes/instances.js";
 import rbacRoutes from "./routes/rbac.js";
+import deployRoutes from "./routes/deploy.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -20,6 +21,7 @@ app.use("/api/roles", roleRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/instances", instanceRoutes);
 app.use("/api/rbac", rbacRoutes);
+app.use("/api/deploy", deployRoutes);
 
 // Health check
 app.get("/api/health", (_req, res) => {

@@ -30,7 +30,10 @@ export default function TeamDetail() {
   const [showInstanceModal, setShowInstanceModal] = useState(false);
   const [newRole, setNewRole] = useState({ name: "", description: "", color: "#3498db", permissions: [] as string[] });
   const [newGroup, setNewGroup] = useState({ name: "", description: "" });
-  const [newInstance, setNewInstance] = useState({ name: "", hostname: "", ipAddress: "", provider: "digitalocean", region: "sgp1", agentModel: "anthropic/claude-sonnet-4-20250514" });
+  const [newInstance, setNewInstance] = useState({ name: "", hostname: "", ipAddress: "", provider: "digitalocean", region: "", agentModel: "anthropic/claude-sonnet-4-20250514", anthropicKey: "", openaiKey: "", telegramToken: "" });
+  const [deployMode, setDeployMode] = useState<"manual" | "provision">("provision");
+  const [activeJobId, setActiveJobId] = useState<string | null>(null);
+  const [deployLogs, setDeployLogs] = useState<string[]>([]);
 
   useEffect(() => {
     if (!teamId) return;
@@ -65,10 +68,67 @@ export default function TeamDetail() {
   const createInstance = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!teamId) return;
-    await api.createInstance(teamId, newInstance);
+
+    if (deployMode === "provision") {
+      // Deploy via clawmacdo
+      const res = await api.provisionInstance({
+        teamId, name: newInstance.name, provider: newInstance.provider,
+        region: newInstance.region, anthropicKey: newInstance.anthropicKey,
+        openaiKey: newInstance.openaiKey, telegramToken: newInstance.telegramToken,
+        model: newInstance.agentModel,
+      });
+      setActiveJobId(res.jobId);
+      setDeployLogs(["🚀 Deployment started..."]);
+      // Start polling
+      pollDeploy(res.jobId);
+    } else {
+      // Manual add
+      await api.createInstance(teamId, newInstance);
+    }
+
     setInstances(await api.getInstances(teamId));
-    setShowInstanceModal(false);
-    setNewInstance({ name: "", hostname: "", ipAddress: "", provider: "digitalocean", region: "sgp1", agentModel: "anthropic/claude-sonnet-4-20250514" });
+    if (deployMode === "manual") {
+      setShowInstanceModal(false);
+      setNewInstance({ name: "", hostname: "", ipAddress: "", provider: "digitalocean", region: "", agentModel: "anthropic/claude-sonnet-4-20250514", anthropicKey: "", openaiKey: "", telegramToken: "" });
+    }
+  };
+
+  const pollDeploy = async (jobId: string) => {
+    const poll = async () => {
+      try {
+        const res = await api.getDeployStatus(jobId);
+        setDeployLogs(res.logs);
+        if (res.status === "running") {
+          setTimeout(poll, 3000);
+        } else {
+          setActiveJobId(null);
+          if (teamId) setInstances(await api.getInstances(teamId));
+          if (res.status === "completed") {
+            setDeployLogs(prev => [...prev, "✅ Deployment completed!"]);
+            setTimeout(() => { setShowInstanceModal(false); setDeployLogs([]); }, 2000);
+          } else {
+            setDeployLogs(prev => [...prev, "❌ Deployment failed. Check logs above."]);
+          }
+        }
+      } catch { setTimeout(poll, 5000); }
+    };
+    poll();
+  };
+
+  const handleDestroy = async (instanceId: string) => {
+    if (!confirm("Are you sure you want to destroy this instance? This cannot be undone.")) return;
+    await api.destroyInstance(instanceId);
+    if (teamId) setInstances(await api.getInstances(teamId));
+  };
+
+  const handleRestart = async (instanceId: string) => {
+    await api.restartInstance(instanceId);
+    if (teamId) setInstances(await api.getInstances(teamId));
+  };
+
+  const handleHealthCheck = async (instanceId: string) => {
+    await api.checkHealth(instanceId);
+    if (teamId) setInstances(await api.getInstances(teamId));
   };
 
   const togglePerm = (permId: string) => {
@@ -211,7 +271,14 @@ export default function TeamDetail() {
                       <span>📡 {inst.channels?.join(", ") || "No channels"}</span>
                       {inst.version && <span>📦 v{inst.version}</span>}
                     </div>
-                    <div style={{ marginTop: 8 }}>{providerBadge(inst.provider)}</div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12 }}>
+                      {providerBadge(inst.provider)}
+                      <div style={{ display: "flex", gap: 4 }}>
+                        <button className="btn btn-ghost btn-sm" onClick={(e) => { e.stopPropagation(); handleHealthCheck(inst.id); }} title="Health check">🔍</button>
+                        <button className="btn btn-ghost btn-sm" onClick={(e) => { e.stopPropagation(); handleRestart(inst.id); }} title="Restart">🔄</button>
+                        <button className="btn btn-danger btn-sm" onClick={(e) => { e.stopPropagation(); handleDestroy(inst.id); }} title="Destroy">🗑️</button>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
